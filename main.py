@@ -14,8 +14,7 @@ app.config['SECRET_KEY'] = os.getenv('KEY')
 def main():
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
-    for user in db_sess.query(User).all():
-        print(user)
+    db_sess.query(User).filter(User.id > 1).delete()
     # app.run()
 
 
