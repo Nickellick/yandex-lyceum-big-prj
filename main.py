@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from data import db_session
 from data.users import User
+from data.news import News
 
 
 load_dotenv()
@@ -14,7 +15,10 @@ app.config['SECRET_KEY'] = os.getenv('KEY')
 def main():
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
-    db_sess.query(User).filter(User.id > 1).delete()
+    user = db_sess.query(User).filter(User.id == 1).first()
+    news = News(title="Первая новость", content="Привет блог!",
+                is_private=True)
+    user.news.append(news)
     db_sess.commit()
     # app.run()
 
