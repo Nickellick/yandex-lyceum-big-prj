@@ -17,3 +17,6 @@ class User(SqlAlchemyBase):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
     news = orm.relation("News", back_populates='user')
+
+    def __repr__(self):
+        return f'Имя пользователя: {self.name}\tО себе: {self.about}\tЭл. почта: {self.email}\tДата и время регистрации: {self.created_date}'

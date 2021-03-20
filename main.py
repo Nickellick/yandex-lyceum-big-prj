@@ -15,7 +15,7 @@ def main():
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
     for user in db_sess.query(User).all():
-        print(user.name)
+        print(user)
     # app.run()
 
 
