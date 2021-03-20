@@ -15,6 +15,7 @@ def main():
     db_session.global_init('db/blogs.db')
     db_sess = db_session.create_session()
     db_sess.query(User).filter(User.id > 1).delete()
+    db_sess.commit()
     # app.run()
 
 
