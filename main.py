@@ -13,13 +13,9 @@ app.config['SECRET_KEY'] = os.getenv('KEY')
 
 def main():
     db_session.global_init('db/blogs.db')
-    user = User()
-    user.name = 'Пользователь 1'
-    user.about = 'Я пользователь 1'
-    user.email = 'user1@yandex.ru'
     db_sess = db_session.create_session()
-    db_sess.add(user)
-    db_sess.commit()
+    for user in db_sess.query(User).all():
+        print(user.name)
     # app.run()
 
 
