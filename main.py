@@ -5,7 +5,8 @@ from data import db_session
 from data.users import User
 from data.news import News
 from forms.users import RegisterForm, LoginForm
-from flask_login import LoginManager, login_user, login_required, logout_user
+from forms.news import NewsForm
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 load_dotenv()
 
@@ -58,7 +59,11 @@ def create_news(news_title):
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.is_private != True)
+    if current_user.is_authenticated:
+        news = db_sess.query(News).filter(
+            (News.user == current_user) | (News.is_private != True))
+    else:
+        news = db_sess.query(News).filter(News.is_private != True)
     return render_template("index.html", news=news)
 
 
@@ -108,6 +113,23 @@ def logout():
     logout_user()
     return redirect("/")
 
+
+@app.route('/news',  methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = NewsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        news = News()
+        news.title = form.title.data
+        news.content = form.content.data
+        news.is_private = form.is_private.data
+        current_user.news.append(news)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('news.html', title='Добавление новости',
+                           form=form)
 
 
 @login_manager.user_loader

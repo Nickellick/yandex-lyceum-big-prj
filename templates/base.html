@@ -15,6 +15,7 @@
         <a class="navbar-brand" href="#">Наше приложение</a>
         {% if current_user.is_authenticated %}
             <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+            <a href="news" class="btn btn-secondary">Добавить новость</a>
         {% else %}
             <p>
                 <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
