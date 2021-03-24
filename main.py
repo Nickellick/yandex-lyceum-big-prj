@@ -4,13 +4,15 @@ import os
 from data import db_session
 from data.users import User
 from data.news import News
-from forms.users import RegisterForm
-
+from forms.users import RegisterForm, LoginForm
+from flask_login import LoginManager, login_user
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 @app.route("/cookie_test")
@@ -42,7 +44,6 @@ def session_test():
     session['visits_count'] = visits_count + 1
     return make_response(
         f"Вы пришли на эту страницу {visits_count + 1} раз")
-
 
 
 @app.route('/create_news/<news_title>')
@@ -84,6 +85,27 @@ def register():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 def main():
