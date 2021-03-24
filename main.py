@@ -36,6 +36,15 @@ def cookie_test():
     return res
 
 
+@app.route("/session_test")
+def session_test():
+    visits_count = session.get('visits_count', 0)
+    session['visits_count'] = visits_count + 1
+    return make_response(
+        f"Вы пришли на эту страницу {visits_count + 1} раз")
+
+
+
 @app.route('/create_news/<news_title>')
 def create_news(news_title):
     db_sess = db_session.create_session()
