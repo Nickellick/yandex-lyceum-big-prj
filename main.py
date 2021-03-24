@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request, make_response, session
 from dotenv import load_dotenv
 import os
 from data import db_session
@@ -11,6 +11,29 @@ load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('KEY')
+
+
+@app.route("/cookie_test")
+def cookie_test():
+    visits_count = int(request.cookies.get("visits_count", 0))
+    if visits_count >= 10:
+        res = make_response(
+            f'Вы пришли на эту страницу {visits_count + 1} раз. Самое время почистить вам куки!')
+        res.set_cookie("visits_count", '0', max_age=0)
+        return res
+    if visits_count:
+        res = make_response(
+            f"Вы пришли на эту страницу {visits_count + 1} раз")
+        res.set_cookie("visits_count", str(visits_count + 1),
+                       max_age=60 * 60 * 24 * 365 * 2)
+    else:
+        db_sess = db_session.create_session()
+        news = db_sess.query(News).filter(News.is_private != True)
+        res = make_response(
+            render_template('index.html', news=news))
+        res.set_cookie("visits_count", '1',
+                       max_age=60 * 60 * 24 * 365 * 2)
+    return res
 
 
 @app.route('/create_news/<news_title>')
