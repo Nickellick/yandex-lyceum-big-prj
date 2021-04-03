@@ -7,10 +7,13 @@ from data.news import News
 from forms.users import RegisterForm, LoginForm
 from forms.news import NewsForm
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_restful import reqparse, abort, Api, Resource
+import news_resources
 
 load_dotenv()
 
 app = Flask(__name__)
+api = Api(app)
 app.config['SECRET_KEY'] = os.getenv('KEY')
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -147,6 +150,8 @@ def main():
     # user.news.append(news)
     # db_sess.commit()
     app.register_blueprint(news_api.blueprint)
+    api.add_resource(news_resources.NewsListResource, '/api/v2/news')
+    api.add_resource(news_resources.NewsResource, '/api/v2/news/<int:news_id>')
     app.run(host='127.0.0.1', port=8080)
 
 
