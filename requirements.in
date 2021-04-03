@@ -3,3 +3,5 @@ flask
 flask-wtf
 sqlalchemy
 python-dotenv
+SQLAlchemy-serializer
+flask-restful

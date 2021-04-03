@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, request, make_response, session, abort
 from dotenv import load_dotenv
 import os
-from data import db_session
+from data import db_session, news_api
 from data.users import User
 from data.news import News
 from forms.users import RegisterForm, LoginForm
@@ -146,6 +146,7 @@ def main():
     #             is_private=True)
     # user.news.append(news)
     # db_sess.commit()
+    app.register_blueprint(news_api.blueprint)
     app.run(host='127.0.0.1', port=8080)
 
 

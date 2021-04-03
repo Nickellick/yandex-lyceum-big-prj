@@ -1,8 +1,9 @@
 import sqlalchemy
+from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 
 
-class Category(SqlAlchemyBase):
+class Category(SqlAlchemyBase, SerializerMixin):
     association_table = sqlalchemy.Table(
         'association',
         SqlAlchemyBase.metadata,
